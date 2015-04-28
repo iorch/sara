@@ -1,0 +1,60 @@
+#!/usr/bin/env python
+# coding=utf-8
+from flask import Flask
+from flask import jsonify
+from flask import make_response
+from flask import request
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.externals import joblib
+from bs4 import BeautifulSoup
+import re
+import os
+import sys
+sys.path.append( os.path.join(os.path.dirname(__file__), 'DeepLearningMovies/' ))
+from KaggleWord2VecUtility import KaggleWord2VecUtility
+from nltk.corpus import stopwords
+
+
+app = Flask(__name__)
+
+def review_words( raw_text ):
+    review_text = BeautifulSoup(raw_text).get_text()
+    letters_only = re.sub("^(\w+)[0-9]@", " ", review_text) 
+    callback = lambda pat: pat.group(0).decode('utf-8').lower()
+    iac = re.sub(u"Ă",u"í",letters_only)
+    ene = re.sub(u"Ñ",u"ñ",iac)
+    words = re.sub("(\w+)", callback, ene).split()
+    stops = set(stopwords.words("spanish")) 
+    meaningful_words = [w for w in words if not w in stops] 
+    return( u" ".join( meaningful_words )) 
+
+
+def evaluate_petition(features):
+    pipe = joblib.load('models/bow_ng6_nf10000_ne800.pkl') 
+    test_data_features = pipe.named_steps['vectorizer'].transform(features)
+    test_data_features = test_data_features.toarray()
+    result = pipe.named_steps['forest'].predict(test_data_features)
+    return result
+
+    
+
+@app.route('/sac/peticiones/hello_world')
+def hello_world():
+    return 'Hello World!'
+
+@app.route('/sac/peticiones/clasificador', methods=['POST'])
+def create_task():
+    if not request.json or not 'folioSAC' in request.json:
+        abort(400)
+    task = {
+        'folioSAC': request.json['folioSAC'],
+        'descripcion': request.json['descripcion'],
+    }
+    features = review_words(task['descripcion'])
+    myeval = evaluate_petition(features)
+    #tasks.append(task)
+    return jsonify({'task': myeval[0]}), 201
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0',debug=True)
