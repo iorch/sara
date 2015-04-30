@@ -55,7 +55,7 @@ def create_task():
     clean_test_descripciones.append(u" ".join(KaggleWord2VecUtility.review_to_wordlist(features, True)))
     myeval = evaluate_petition(clean_test_descripciones)
     #tasks.append(task)
-    return jsonify({'task': myeval[0]}), 201
+    return jsonify({'dependencia_sugerida': myeval[0]}), 201
 
 
 if __name__ == '__main__':
