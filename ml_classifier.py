@@ -30,7 +30,7 @@ def review_words( raw_text ):
 
 
 def evaluate_petition(features):
-    pipe = joblib.load('models/bow_ng6_nf10000_ne800.pkl') 
+    pipe = joblib.load('models/bow_ng6_nf9500_ne750.pkl') 
     test_data_features = pipe.named_steps['vectorizer'].transform(features)
     test_data_features = test_data_features.toarray()
     result = pipe.named_steps['forest'].predict(test_data_features)
@@ -50,8 +50,10 @@ def create_task():
         'folioSAC': request.json['folioSAC'],
         'descripcion': request.json['descripcion'],
     }
+    clean_test_descripciones = []
     features = review_words(task['descripcion'])
-    myeval = evaluate_petition(features)
+    clean_test_descripciones.append(u" ".join(KaggleWord2VecUtility.review_to_wordlist(features, True)))
+    myeval = evaluate_petition(clean_test_descripciones)
     #tasks.append(task)
     return jsonify({'task': myeval[0]}), 201
 
