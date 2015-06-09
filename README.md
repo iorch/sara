@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/mxabierto/atencion-ciudadana.png?label=ready&title=Ready)](https://waffle.io/mxabierto/atencion-ciudadana)
 # atencion-ciudadana
 
 En este repositorio, se encuentra un código que genera un modelo de Random Forest que clasifica las peticiones recibidas en el portal de atención ciudadana, con respecto a la Dependencia gubernamental que debería atenderla.
