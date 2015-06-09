@@ -106,8 +106,8 @@ if __name__ == '__main__':
     # Initialize the "CountVectorizer" object, which is scikit-learn's
     # bag of words tool.
     num_grams = [6]
-    num_features = [10000]
-    num_estimators = [800]
+    num_features = [9500]
+    num_estimators = [750]
     
     for g in num_grams:
         for f in num_features:
