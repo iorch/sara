@@ -12,6 +12,8 @@ import os
 import sys
 sys.path.append( os.path.join(os.path.dirname(__file__), 'DeepLearningMovies/' ))
 from KaggleWord2VecUtility import KaggleWord2VecUtility
+sys.path.append( os.path.dirname(__file__) )
+from profanity_filter import *
 from nltk.corpus import stopwords
 
 
@@ -38,9 +40,17 @@ def evaluate_petition(features):
 
     
 
-@app.route('/sac/peticiones/hello_world')
-def hello_world():
-    return 'Hello World!'
+@app.route('/sac/peticiones/filtro_malas_palabras', methods=['POST'])
+def filtro_malas_palabras():
+    f = ProfanitiesFilter(my_list, replacements="-") 
+    if not request.json or not 'descripcion' in request.json:
+        abort(400)
+    task = {
+        'folioSAC': request.json['folioSAC'],
+        'descripcion': request.json['descripcion'],
+    }
+    profanity_score = f.profanity_score(task['descripcion'])
+    return jsonify({'indice_de_groserias': profanity_score})
 
 @app.route('/sac/peticiones/clasificador', methods=['POST'])
 def create_task():
