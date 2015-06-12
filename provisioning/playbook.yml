@@ -4,3 +4,4 @@
   sudo: true
   roles:
     - install-database
+    - install-project
