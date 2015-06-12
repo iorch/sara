@@ -1,0 +1,6 @@
+---
+- name: Copy script to download nltk corpus
+  copy: src=dlnltkc.py dest=/home/vagrant/sara
+
+- name: Download nltk corpus
+  command: /home/vagrant/sara/dlnltkc.py
