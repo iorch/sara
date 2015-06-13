@@ -5,3 +5,4 @@
   roles:
     - install-database
     - install-project
+    - postinstall

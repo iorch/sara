@@ -7,7 +7,7 @@ Vagrant.configure("2") do |config|
   config.vm.box_url = "https://atlas.hashicorp.com/debian/boxes/jessie64"
 
   config.vm.provider "virtualbox" do |v|
-    v.memory = 1536
+    v.memory = 2048
     #v.cpus = 2
   end
 
