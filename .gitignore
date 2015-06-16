@@ -60,3 +60,13 @@ docs/_build/
 # PyBuilder
 target/
 
+# Emacs
+*~
+
+# PyCharm
+.idea/
+
+# Vagrant
+.vagrant/
+
+*.sql
