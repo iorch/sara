@@ -1,0 +1,16 @@
+---
+- name: Install Required Packages
+  apt: pkg={{ item }} state=present update_cache=yes
+  with_items:
+    - mysql-server
+    - mysql-client
+    - python-mysqldb
+
+- name: Create database
+  mysql_db: name=sacdb state=present
+
+- name: Copy database dump
+  copy: src=dump.sql dest=/tmp
+
+- name: Import database dump
+  mysql_db: name=sacdb state=import target=/tmp/dump.sql
