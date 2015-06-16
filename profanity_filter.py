@@ -15,10 +15,11 @@ import re
 import unicodedata
 import os
 import sys
-sys.path.append( os.path.dirname(__file__) )
+sys.path.append(os.path.dirname(__file__))
 import malas_palabras
 
 my_list = malas_palabras.__una_palabra__
+
 
 class ProfanitiesFilter(object):
     def __init__(self, filterlist, ignore_case=True, replacements="$@%-?!", 
@@ -41,33 +42,33 @@ class ProfanitiesFilter(object):
         self.complete = complete
         self.inside_words = inside_words
         
-    def remove_accents(self,input_str):
+    def remove_accents(self, input_str):
         nkfd_form = unicodedata.normalize('NFKD', input_str)
         return u"".join([c for c in nkfd_form if not unicodedata.combining(c)])
     
-    def review_words(self, raw_text ):
+    def review_words(self, raw_text):
         review_text = BeautifulSoup(raw_text).get_text()
         letters_only = re.sub("^(\w+)[0-9]@", " ", review_text) 
         callback = lambda pat: pat.group(0).decode('utf-8').lower()
-        iac = re.sub(u"Ă",u"í",letters_only)
-        ene = re.sub(u"Ñ",u"ñ",iac)
+        iac = re.sub(u"Ă", u"í", letters_only)
+        ene = re.sub(u"Ñ", u"ñ", iac)
         no_accents = self.remove_accents(ene)
         meaningful_words = re.sub("(\w+)", callback, no_accents).split()
-        return( u" ".join( meaningful_words )) 
+        return u" ".join(meaningful_words)
     
-    def profanity_score(self,my_string0):
+    def profanity_score(self, my_string0):
         # The score is the number of bad words in the string. The bad words are 
         # defined in the malas_palabras.py file. 
         compiled_bw = {}
-        isabadword ={}
+        isabadword = {}
         to_test = re.compile(".*-.*")
-        my_string =  self.review_words(my_string0)
+        my_string = self.review_words(my_string0)
         for j in my_string.split(' '):
             isabadword[j] = 0
             for i in self.badwords:
                 i = self.remove_accents(i)
                 compiled_bw[i] = re.compile(i)
-                if isabadword[j]==0:
+                if isabadword[j] == 0:
                     __replacement__ = compiled_bw[i].sub(self.__replacer,j)
                     test = to_test.match(__replacement__)
                     isabadword[j] = 0 if test is None else 1
@@ -75,7 +76,7 @@ class ProfanitiesFilter(object):
                     next
                 
         print isabadword
-        return reduce(lambda x, y: x+y,isabadword.values(),0)
+        return reduce(lambda x, y: x+y, isabadword.values(), 0)
 
     def _make_clean_word(self, length):
         """
@@ -84,7 +85,7 @@ class ProfanitiesFilter(object):
 
         """
         return ''.join([random.choice(self.replacements) for i in
-                  range(length)])
+                        range(length)])
 
     def __replacer(self, match):
         value = match.group()
@@ -111,9 +112,9 @@ class ProfanitiesFilter(object):
 
 if __name__ == '__main__':
 
-   
     f = ProfanitiesFilter(my_list, replacements="-")    
-    example = u"I am doing pendejadas chingonas encabronadas porque ese maldito coño de funcionario me hizo emputar, y es un pinche maricón mirón de mierda."
+    example = u"I am doing pendejadas chingonas encabronadas porque ese maldito coño de funcionario me hizo emputar, " \
+              u"y es un pinche maricón mirón de mierda."
     
     print f.clean(example)
     # Returns "I am doing --- ------ badlike things."
