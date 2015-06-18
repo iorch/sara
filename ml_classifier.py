@@ -38,6 +38,18 @@ def evaluate_petition(features):
     return result
 
 
+@app.errorhandler(400)
+def bad_request(error):
+    app.logger.error(error)
+    return make_response(jsonify({'error': 'Bad Request'}), 400)
+
+
+@app.errorhandler(404)
+def not_found(error):
+    app.logger.error(error)
+    return make_response(jsonify({'error': 'Not Found'}), 404)
+
+
 @app.route('/sac/peticiones/filtro_malas_palabras', methods=['POST'])
 def filtro_malas_palabras():
     f = ProfanitiesFilter(my_list, replacements="-")
