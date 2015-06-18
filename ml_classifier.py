@@ -51,22 +51,26 @@ def filtro_malas_palabras():
     return jsonify({'indice_de_groserias': profanity_score})
 
 
-@app.route('/sac/peticiones/clasificador', methods=['POST'])
+@app.route('/petition/classification', methods=['POST'])
 def create_task():
-    if not request.json or not 'folioSAC' in request.json:
+    if not request.json or not 'id' in request.json:
         abort(400)
     task = {
-        'folioSAC': request.json['folioSAC'],
-        'descripcion': request.json['descripcion'],
+        'id': request.json['id'],
+        'title': request.json['title'],
+        'description': request.json['description'],
     }
     clean_test_descripciones = []
-    features = review_words(task['descripcion'])
+    features = review_words(task['description'])
     clean_test_descripciones.append(u" ".join(
         KaggleWord2VecUtility.review_to_wordlist(features, True))
         )
     myeval = evaluate_petition(clean_test_descripciones)
     # tasks.append(task)
-    return jsonify({'dependencia_sugerida': myeval[0]}), 201
+    return jsonify({'id': request.json['id'],
+                    'title': request.json['title'],
+                    'description': request.json['description'],
+                    'classification_id': myeval[0]}), 201
 
 
 if __name__ == '__main__':
