@@ -11,4 +11,5 @@ Además, contiene un servicio web que recibe la petición en fromato json y resp
 1. Se asume que se tiene aislado el ambiente de python, con todos los requerimientos listados en requirement.txt
 2. Crear las carpetas data/, plots/, models/
 3. Ejecutar BagOfWords.py
-4. Encender el servicio web:  ml_classifier.py
+4. Iniciar redis-server y `celery -A tasks worker --loglevel=info`
+5. Encender el servicio web:  ml_classifier.py
