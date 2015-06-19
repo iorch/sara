@@ -40,7 +40,7 @@ __Redis__
 docker run \
 --name sara-redis \
 -v /OTHER/VALID/PATH:/data \
--d redis
+-P -d redis
 ```
 
 __SARA__
