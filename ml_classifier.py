@@ -34,20 +34,21 @@ def review_words(raw_text):
 def get_relevant_hits(like_text):
     index_name = "peticion"
     doc_type = "pregunta"
-    stop_words = ["para","apoyo","una","la","el","de","en"]
-    body = {"query": { "more_like_this" : { "fields":["titulo"],
-            "like_text" : like_text, "min_term_freq" : 1,
-            "max_query_terms" : 100, "min_doc_freq": 0,
-            "stop_words":stop_words}}}
+    stop_words = ["para", "apoyo", "una", "la", "el", "de", "en"]
+    body = {"query": {"more_like_this": {"fields": ["titulo"],
+            "like_text": like_text, "min_term_freq": 1,
+            "max_query_terms": 100, "min_doc_freq": 0,
+            "stop_words": stop_words}}}
     es = elasticsearch.Elasticsearch()
-    mlts = es.search(index=index_name, doc_type=doc_type,body=body)
+    mlts = es.search(index=index_name, doc_type=doc_type, body=body)
     relevant_sugestions = []
     hits = mlts.get('hits')["hits"]
     for hit in hits:
         if hit["_score"] >= 0.5:
             source = hit["_source"]
             relevant_sugestions.append({"title": source["titulo"],
-            "description": source["sugerencia"], "link": source["link"]})
+                                        "description": source["sugerencia"],
+                                        "link": source["link"]})
     return relevant_sugestions
 
 
@@ -82,19 +83,16 @@ def create_task():
         abort(400)
     task = {
         'id': request.json['id'],
-        'title': request.json['title'],
-        'description': request.json['description'],
+        'text': request.json['text'],
     }
     clean_test_descripciones = []
-    features = review_words(task['description'])
+    features = review_words(task['text'])
     clean_test_descripciones.append(u" ".join(
-        KaggleWord2VecUtility.review_to_wordlist(features, True))
-        )
+        KaggleWord2VecUtility.review_to_wordlist(features, True)))
     myeval = evaluate_petition.delay(clean_test_descripciones)
     # tasks.append(task)
     return jsonify({'id': request.json['id'],
-                    'title': request.json['title'],
-                    'description': request.json['description']}), 201
+                    'text': request.json['text']}), 201
 
 
 @app.route('/recommendations', methods=['GET'])
