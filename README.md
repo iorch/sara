@@ -12,3 +12,32 @@ Además, contiene un servicio web que recibe la petición en fromato json y resp
 2. Crear las carpetas data/, plots/, models/
 3. Ejecutar BagOfWords.py
 4. Encender el servicio web:  ml_classifier.py
+
+### Docker
+Para utilizar el app en contenedores basta ejecutar sus componentes individuales:
+
+__Elastic Search__
+```
+docker run \
+--name sara-es \
+-P -d elasticsearch
+```
+
+__MySQL__
+```
+docker run \
+--name sara-mysql \
+-e MYSQL_ROOT_PASSWORD=root \
+-v /home/core/data:/var/lib/mysql \
+-P -d mysql
+```
+
+__SARA__
+```
+docker run \
+--name sara \
+--link sara-mysql:mysql \
+--link sara-es:elasticsearch \
+-p 5000:5000 \
+-d mxabierto/sara
+```
