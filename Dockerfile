@@ -3,10 +3,11 @@
 # Build:
 #   docker build -t mxabierto/sara .
 # Usage:
-#   docker run --rm \
+#   docker run \
 #     --name sara \
 #     --link sara-mysql:mysql \
 #     --link sara-es:elasticsearch \
+#     --link sara-redis:redis \
 #     -p 5000:5000 -d mxabierto/sara
 
 # Base image
