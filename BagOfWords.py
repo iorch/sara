@@ -28,7 +28,12 @@ from nltk.corpus import stopwords
 from sklearn.externals import joblib
 
 # connect
-db_conn = MySQLdb.connect(host="localhost", user="root", passwd="", db="sacdb")
+db_conn = MySQLdb.connect(
+    host=os.getenv('MYSQL_PORT_3306_TCP_ADDR', '127.0.0.1'),
+    user="root",
+    passwd=os.getenv('MYSQL_ENV_MYSQL_ROOT_PASSWORD', ''),
+    db="sacdb",
+    port=int( os.getenv('MYSQL_PORT_3306_TCP_PORT', 3306) ) )
 cursor = db_conn.cursor()
 cursor.execute('SET NAMES utf8')
 
