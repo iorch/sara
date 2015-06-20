@@ -1,4 +1,10 @@
 ---
+- name: Add Elasticsearch key
+  apt_key: url=https://packages.elastic.co/GPG-KEY-elasticsearch state=present
+  
+- name: Add Elasticsearch repository
+  apt_repository: repo='deb http://packages.elastic.co/elasticsearch/1.6/debian stable main'
+
 - name: Install Required Packages
   apt: pkg={{ item }} state=present update_cache=yes
   with_items:
@@ -15,6 +21,8 @@
     - python-pip
     - libmysqlclient-dev
     - mysql-client
+    - redis-server
+    - elasticsearch
 
 
 - name: Install project source
@@ -22,3 +30,9 @@
 
 - name: Install Python Requirements
   pip: requirements=/home/vagrant/sara/requirements.txt
+  
+- name: Start redis
+  service: name=redis-server state=started
+  
+- name: Start Elasticsearch
+  service: name=elasticsearch state=started
