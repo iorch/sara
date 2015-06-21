@@ -11,7 +11,7 @@
 #     -p 5000:5000 -d mxabierto/sara
 
 # Base image
-FROM mxabierto/base
+FROM mxabierto/python
 
 MAINTAINER bcessa <ben@pixative.com>
 
@@ -22,14 +22,12 @@ RUN \
   gcc \
   g++ \
   gfortran \
-  git-core \
   liblapack-dev \
   libmysqlclient-dev \
   libopenblas-dev \
   libxml2-dev \
-  libxslt1-dev \
-  python-dev \
-  python-pip && \
+  libxslt1-dev && \
+  ldconfig && \
   rm -rf /var/lib/apt/lists/*
 
 # Add source
@@ -38,8 +36,8 @@ ADD . /root/sara
 # App setup
 RUN \
   mkdir /root/sara/{data,plots,models} && \
-  pip install -r /root/sara/requirements.txt && \
-  chmod 775 /root/sara/ml_classifier.py
+  chmod 775 /root/sara/ml_classifier.py && \
+  pip install -r /root/sara/requirements.txt
 
 # Default port
 EXPOSE 5000
