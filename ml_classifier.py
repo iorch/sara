@@ -97,7 +97,7 @@ def create_task():
     # 3) A callback to put all together in a JSON
     callback = build_classification_response.subtask()
     chord([
-        evaluate_petition.s(clean_test_descripciones),
+        evaluate_petition.s(task['id'], clean_test_descripciones),
         catch_bad_words_in_text.s(task['text'])
     ])(callback)
 
