@@ -13,7 +13,7 @@ sys.path.append(os.path.dirname(__file__))
 from profanity_filter import *
 from nltk.corpus import stopwords
 import elasticsearch
-from tasks import evaluate_petition
+from tasks import evaluate_petition, catch_bad_words_in_text
 
 
 app = Flask(__name__)
@@ -90,6 +90,8 @@ def create_task():
     clean_test_descripciones.append(u" ".join(
         KaggleWord2VecUtility.review_to_wordlist(features, True)))
     myeval = evaluate_petition.delay(clean_test_descripciones)
+    # Runs a job to detect bad words in text
+    bad_words_catcher = catch_bad_words_in_text.delay(task['text'])
     # tasks.append(task)
     return jsonify({'id': request.json['id'],
                     'text': request.json['text']}), 201
