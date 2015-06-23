@@ -45,7 +45,7 @@ def get_relevant_hits(like_text):
     relevant_sugestions = []
     hits = mlts.get('hits')["hits"]
     for hit in hits:
-        if hit["_score"] >= 0.5:
+        if hit["_score"] >= 0.3:
             source = hit["_source"]
             relevant_sugestions.append({"title": source["titulo"],
                                         "description": source["sugerencia"],
