@@ -27,6 +27,9 @@ import pandas.io.sql as sql
 from nltk.corpus import stopwords
 from sklearn.externals import joblib
 
+# download stopwords
+import nltk
+
 # connect
 db_conn = MySQLdb.connect(
     host=os.getenv('MYSQL_PORT_3306_TCP_ADDR', '127.0.0.1'),
@@ -80,16 +83,16 @@ if __name__ == '__main__':
 
     print train.shape
     print test.shape
-    print 'The first descripcion is:'
-    print review_words(train["descripcion"][0])
-    print review_words(train["descripcion"][1])
-    print review_words(test["descripcion"][0])
-    print review_words(test["descripcion"][1])
-
-    raw_input("Press Enter to continue...")
+    #print 'The first descripcion is:'
+    #print review_words(train["descripcion"][0])
+    #print review_words(train["descripcion"][1])
+    #print review_words(test["descripcion"][0])
+    #print review_words(test["descripcion"][1])
+    #raw_input("Press Enter to continue...")
 
     print 'Download text data sets. If you already have NLTK datasets downloaded, ' \
           'just close the Python download window...'
+    nltk.download('stopwords')
     # nltk.download()  # Download text data sets, including stop words
 
     # Initialize an empty list to hold the clean descripcions

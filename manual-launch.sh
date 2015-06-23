@@ -33,10 +33,6 @@ if [ -d 'sacdb-data' ]; then
   -v `pwd`/sacdb-data:/dump \
   mysql \
   sh -c 'exec mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD" < /dump/dump.sql'
-  
-  # Run bag-of-words script
-  echo "Running bag-of-words"
-  docker run -it --rm --link sara-mysql:mysql mxabierto/sara /root/sara/BagOfWords.py
 fi
 
 # Start service

@@ -43,4 +43,4 @@ RUN \
 EXPOSE 5000
 
 # Start the classifier service by default
-CMD ["/root/sara/ml_classifier.py"]
+CMD ["/root/sara/start.sh"]
