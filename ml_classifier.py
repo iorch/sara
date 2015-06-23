@@ -22,8 +22,7 @@ from tasks import evaluate_petition
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'f@9^w9h9jkc-=jw7pl1eq!+^o*fmd@5o+7pc=0!00r0ef^(aqt'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+app.config.from_pyfile('settings.cfg')
 
 db = SQLAlchemy(app)
 auth = HTTPBasicAuth()
@@ -182,6 +181,4 @@ def get_hits():
 
 
 if __name__ == '__main__':
-    if not os.path.exists('db.sqlite'):
-        db.create_all()
     app.run(host='0.0.0.0', debug=True)
