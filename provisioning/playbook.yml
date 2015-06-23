@@ -1,8 +1,0 @@
----
-- hosts: servers
-  user: vagrant
-  sudo: true
-  roles:
-    - install-database
-    - install-project
-    - postinstall

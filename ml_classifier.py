@@ -15,6 +15,9 @@ from nltk.corpus import stopwords
 import elasticsearch
 from tasks import evaluate_petition
 
+# download stop words
+import nltk
+nltk.download('stopwords')
 
 app = Flask(__name__)
 

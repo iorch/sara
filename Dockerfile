@@ -35,7 +35,6 @@ ADD . /root/sara
 
 # App setup
 RUN \
-  mkdir /root/sara/{data,plots,models} && \
   chmod 775 /root/sara/ml_classifier.py && \
   pip install -r /root/sara/requirements.txt
 
