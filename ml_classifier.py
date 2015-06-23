@@ -85,19 +85,12 @@ def new_user():
             {'Location': url_for('get_user', id=user.id, _external=True)})
 
 
-@app.route('/users/<int:id>')
-def get_user(id):
-    user = User.query.get(id)
-    if not user:
-        abort(400)
-    return jsonify({'username': user.username})
 
-
-@app.route('/token')
+@app.route('/users/token')
 @auth.login_required
 def get_auth_token():
-    token = g.user.generate_auth_token(600)
-    return jsonify({'token': token.decode('ascii'), 'duration': 600})
+    token = g.user.generate_auth_token(31556926)
+    return jsonify({'token': token.decode('ascii'), 'duration': 31556926})
 
 
 def review_words(raw_text):
