@@ -3,7 +3,8 @@
 from celery import Celery
 from sklearn.externals import joblib
 from profanity_filter import *
-import json
+import requests
+import os
 
 BROKER_URL = 'redis://localhost:6379/0'
 BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 1800}  # 1/2 hour.
@@ -37,17 +38,22 @@ def catch_bad_words_in_text(text):
 
 
 @app.task
-def build_classification_response(results):
+def update_remote_petition(results):
     classified_petition = results[0]
     inspected_text = results[1]
     proceeds = False if inspected_text['profanity_score'] > 0 else True
 
-    response = {
-            'id': classified_petition['id'],
-            'text': inspected_text['text'],
-            'agency': classified_petition['agency'],
-            'proceeds': proceeds
-            }
-    print json.dumps(response)
+    petition = {
+        'id': classified_petition['id'],
+        'text': inspected_text['text'],
+        'agency': classified_petition['agency'],
+        'proceeds': proceeds
+    }
+
+    url = os.environ['PETITIONS_SERVER_URL']
+    r = requests.put(url, data=petition)
+    print 'Updating:'
+    print petition
+    print 'PUT request to', url, ' was ', r.status_code
 
 
