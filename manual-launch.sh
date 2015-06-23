@@ -41,7 +41,7 @@ fi
 # Start service
 echo "Starting SARA"
 docker run \
--v `pwd`/logs:/logs
+-v `pwd`/logs:/logs \
 --name sara \
 --link sara-mysql:mysql \
 --link sara-es:elasticsearch \

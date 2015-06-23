@@ -13,7 +13,8 @@ sys.path.append(os.path.dirname(__file__))
 from profanity_filter import *
 from nltk.corpus import stopwords
 import elasticsearch
-from tasks import evaluate_petition
+from tasks import evaluate_petition, catch_bad_words_in_text, build_classification_response
+from celery import chord
 
 # download stop words
 import nltk
@@ -47,7 +48,7 @@ def get_relevant_hits(like_text):
     relevant_sugestions = []
     hits = mlts.get('hits')["hits"]
     for hit in hits:
-        if hit["_score"] >= 0.5:
+        if hit["_score"] >= 0.3:
             source = hit["_source"]
             relevant_sugestions.append({"title": source["titulo"],
                                         "description": source["sugerencia"],
@@ -92,8 +93,17 @@ def create_task():
     features = review_words(task['text'])
     clean_test_descripciones.append(u" ".join(
         KaggleWord2VecUtility.review_to_wordlist(features, True)))
-    myeval = evaluate_petition.delay(clean_test_descripciones)
-    # tasks.append(task)
+
+    # Uses chord to run two jobs and a callback after processing ends
+    # 1) A text classifier
+    # 2) A profanity filter
+    # 3) A callback to put all together in a JSON
+    callback = build_classification_response.subtask()
+    chord([
+        evaluate_petition.s(task['id'], clean_test_descripciones),
+        catch_bad_words_in_text.s(task['text'])
+    ])(callback)
+
     return jsonify({'id': request.json['id'],
                     'text': request.json['text']}), 201
 
