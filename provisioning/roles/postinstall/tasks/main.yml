@@ -14,3 +14,5 @@
   sudo_user: vagrant
 
 # TODO run BagOfwords.py and send Enter
+
+# TODO run celery -A tasks worker --loglevel=info &
