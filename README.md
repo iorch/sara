@@ -37,7 +37,7 @@ docker run \
 __SARA__
 ```sh
 docker run \
--v `pwd`/logs:/logs
+-v `pwd`/logs:/logs \
 --name sara \
 --link sara-mysql:mysql \
 --link sara-es:elasticsearch \
