@@ -70,3 +70,7 @@ target/
 .vagrant/
 
 *.sql
+
+data/
+models/
+plots/
