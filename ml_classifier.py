@@ -181,10 +181,12 @@ def create_task():
 
 @app.route('/recommendations', methods=['GET'])
 def get_hits():
-    if not request.json or not 'title' in request.json:
+    if not request.args.get('title', '') and (not request.json or not 'title' in request.json):
         abort(400)
+    print(request.args.get('title', ''))
+    title = request.args.get('title', '') if request.args.get('title', '') else request.json['title'] 
     task = {
-        'title': request.json['title']
+        'title': title
     }
     relevant_sugestions = get_relevant_hits(task['title'])
     return jsonify({'results': relevant_sugestions})
