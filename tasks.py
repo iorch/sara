@@ -6,7 +6,8 @@ import os
 from celery import Celery
 from sklearn.externals import joblib
 from profanity_filter import *
-import json
+import requests
+import os
 
 REDIS_HOST = os.getenv( 'REDIS_PORT_6379_TCP_ADDR', 'localhost' )+':'+os.getenv( 'REDIS_PORT_6379_TCP_PORT', '6379' )
 BROKER_URL = 'redis://'+ REDIS_HOST +'/0'
@@ -41,17 +42,22 @@ def catch_bad_words_in_text(text):
 
 
 @app.task
-def build_classification_response(results):
+def update_remote_petition(results):
     classified_petition = results[0]
     inspected_text = results[1]
     proceeds = False if inspected_text['profanity_score'] > 0 else True
 
-    response = {
-            'id': classified_petition['id'],
-            'text': inspected_text['text'],
-            'agency': classified_petition['agency'],
-            'proceeds': proceeds
-            }
-    print json.dumps(response)
+    petition = {
+        'id': classified_petition['id'],
+        'text': inspected_text['text'],
+        'agency': classified_petition['agency'],
+        'proceeds': proceeds
+    }
+
+    url = os.environ['PETITIONS_SERVER_URL']
+    r = requests.put(url, data=petition)
+    print 'Updating:'
+    print petition
+    print 'PUT request to', url, ' was ', r.status_code
 
 

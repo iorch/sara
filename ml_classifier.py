@@ -13,7 +13,9 @@ sys.path.append(os.path.dirname(__file__))
 from profanity_filter import *
 from nltk.corpus import stopwords
 import elasticsearch
-from tasks import evaluate_petition, catch_bad_words_in_text, build_classification_response
+from tasks import evaluate_petition
+from tasks import catch_bad_words_in_text
+from tasks import update_remote_petition
 from celery import chord
 
 # download stop words
@@ -98,7 +100,7 @@ def create_task():
     # 1) A text classifier
     # 2) A profanity filter
     # 3) A callback to put all together in a JSON
-    callback = build_classification_response.subtask()
+    callback = update_remote_petition.subtask()
     chord([
         evaluate_petition.s(task['id'], clean_test_descripciones),
         catch_bad_words_in_text.s(task['text'])
