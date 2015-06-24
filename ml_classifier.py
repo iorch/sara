@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-from flask import Flask, request, jsonify, make_response, abort
+from flask import Flask, request, jsonify, make_response, abort, g, url_for
+from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.httpauth import HTTPBasicAuth
+from passlib.apps import custom_app_context as pwd_context
+from itsdangerous import (TimedJSONWebSignatureSerializer
+                          as Serializer, BadSignature, SignatureExpired)
 from sklearn.feature_extraction.text import TfidfVectorizer
 from bs4 import BeautifulSoup
 import re
@@ -20,6 +25,72 @@ from celery import chord
 
 
 app = Flask(__name__)
+app.config.from_pyfile('settings.cfg')
+
+db = SQLAlchemy(app)
+auth = HTTPBasicAuth()
+
+
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(32), index=True)
+    password_hash = db.Column(db.String(64))
+
+    def hash_password(self, password):
+        self.password_hash = pwd_context.encrypt(password)
+
+    def verify_password(self, password):
+        return pwd_context.verify(password, self.password_hash)
+
+    def generate_auth_token(self, expiration=31556926):
+        s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
+        return s.dumps({'id': self.id})
+
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except SignatureExpired:
+            return None
+        except BadSignature:
+            return None
+        user = User.query.get(data['id'])
+        return user
+
+
+@auth.verify_password
+def verify_password(username_or_token, password):
+    user = User.verify_auth_token(username_or_token)
+    if not user:
+        user = User.query.filter_by(username=username_or_token).first()
+        if not user or not user.verify_password(password):
+            return False
+    g.user = user
+    return True
+
+
+@app.route('/users', methods=['POST'])
+def new_user():
+    username = request.json.get('username')
+    password = request.json.get('password')
+    if username is None or password is None:
+        abort(400)
+    if User.query.filter_by(username=username).first() is not None:
+        abort(400)
+    user = User(username=username)
+    user.hash_password(password)
+    db.session.add(user)
+    db.session.commit()
+    return (jsonify({'username': user.username}), 201)
+
+
+@app.route('/users/token')
+@auth.login_required
+def get_auth_token():
+    token = g.user.generate_auth_token(31556926)
+    return jsonify({'token': token.decode('ascii'), 'duration': 31556926})
 
 
 def review_words(raw_text):
@@ -81,6 +152,7 @@ def filtro_malas_palabras():
 
 
 @app.route('/petition/classification', methods=['POST'])
+@auth.login_required
 def create_task():
     if not request.json or not 'id' in request.json:
         abort(400)
@@ -119,4 +191,6 @@ def get_hits():
 
 
 if __name__ == '__main__':
+    if not os.path.exists('db.sqlite'):
+        db.create_all()
     app.run(host='0.0.0.0', debug=True)
