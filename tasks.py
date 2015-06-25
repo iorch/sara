@@ -1,4 +1,5 @@
 # Celery tasks
+# -*- coding: utf-8 -*-
 
 from celery import Celery
 from sklearn.externals import joblib
@@ -41,7 +42,10 @@ def catch_bad_words_in_text(text):
 def update_remote_petition(results):
     classified_petition = results[0]
     inspected_text = results[1]
-    proceeds = False if inspected_text['profanity_score'] > 0 else True
+    if inspected_text['profanity_score'] > 0:
+        proceeds = {'value': False, 'reason': u'Petición Irrespetuosa'.encode('utf-8')}
+    else:
+        proceeds = {'value': True}
 
     petition = {
         'id': classified_petition['id'],
