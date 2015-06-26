@@ -6,3 +6,4 @@
     - install-database
     - install-project
     - postinstall
+    - deploy-project

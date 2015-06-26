@@ -1,0 +1,23 @@
+---
+- name: Install uWSGI, supervisord, ngnix
+  apt: pkg={{ item }} state=present update_cache=yes
+  with_items:
+    - uwsgi
+    - uwsgi-plugin-python
+    - supervisor
+    - nginx
+
+- name: Copy nginx configuration file
+  copy: src=nginx.conf dest=/etc/nginx/conf.d/sara
+  
+- name: Copy supervisor configuration file
+  copy: src=supervisor.conf dest=/etc/supervisor/conf.d/sara.conf
+  
+- name: Copy uwsgi ini file
+  copy: src=uwsgi.ini dest=/home/vagrant/sara
+  
+- name: Start supervisor service
+  supervisorctl: name=wsgi-sara state=started
+  
+- name: Reload nginx server
+  service: name=nginx state=reloaded
