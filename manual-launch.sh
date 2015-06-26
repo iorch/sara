@@ -46,5 +46,6 @@ docker run \
 --link sara-mysql:mysql \
 --link sara-es:elasticsearch \
 --link sara-redis:redis \
+-e PETITIONS_SERVER_URL="http://www.gob.mx/SAC/petitionClassifier/update" \
 -p 5000:5000 \
 -d mxabierto/sara
