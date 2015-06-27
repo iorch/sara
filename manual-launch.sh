@@ -46,6 +46,7 @@ docker run \
 --link sara-mysql:mysql \
 --link sara-es:elasticsearch \
 --link sara-redis:redis \
+-e SARA_MODEL=https://s3.amazonaws.com/org.mxabierto/data/sara-model-0.1.tgz \
 -e PETITIONS_SERVER_URL="x.x.x.x" \
 -p 5000:5000 \
 -d mxabierto/sara

@@ -37,12 +37,13 @@ docker run \
 __SARA__
 ```sh
 docker run \
--v `pwd`/logs:/logs \
 --name sara \
 --link sara-mysql:mysql \
 --link sara-es:elasticsearch \
 --link sara-redis:redis \
+-v `pwd`/logs:/logs \
 -e PETITIONS_SERVER_URL="x.x.x.x" \
+-e SARA_MODEL="x.x.x.x" \
 -p 5000:5000 \
 -d mxabierto/sara
 ```
