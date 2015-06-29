@@ -9,6 +9,7 @@
 #   --link sara-es:elasticsearch \
 #   --link sara-redis:redis \
 #   -v `pwd`/logs:/logs \
+#   -e SARA_MODEL="..." \
 #   -e PETITIONS_SERVER_URL="x.x.x.x" \
 #   -p 5000:5000 \
 #   -d mxabierto/sara
@@ -22,11 +23,7 @@ MAINTAINER bcessa <ben@pixative.com>
 RUN \
   apt-get update && \
   apt-get install -y \
-  gcc \
-  g++ \
-  gfortran \
   liblapack-dev \
-  libmysqlclient-dev \
   libopenblas-dev \
   libxml2-dev \
   libxslt1-dev && \
@@ -35,11 +32,6 @@ RUN \
 
 # Add source
 ADD . /root/sara
-
-# App setup
-RUN \
-  chmod 775 /root/sara/ml_classifier.py && \
-  pip install -r /root/sara/requirements.txt
 
 # Default port
 EXPOSE 5000

@@ -30,7 +30,7 @@ sara:
   volumes:
     - /home/core/sara/logs:/logs
   environment:
-    - SARA_MODEL=https://s3.amazonaws.com/org.mxabierto/data/sara-model-0.1.tgz
+    - SARA_MODEL=https://s3.amazonaws.com/org.mxabierto/sara/model-0.1.tgz
     - PETITIONS_SERVER_URL=x.x.x.x
   links:
     - elasticsearch
