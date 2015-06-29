@@ -1,5 +1,12 @@
 ---
 - hosts: servers
+  vars:
+    elasticsearch_user: vagrant
+    elasticsearch_group: vagrant
+    elasticsearch_conf_dir: /etc/elasticsearch
+    elasticsearch_share_dir: /usr/share/elasticsearch
+    elasticsearch_service_startonboot: no
+    elasticsearch_service_state: started
   user: vagrant
   sudo: true
   roles:
