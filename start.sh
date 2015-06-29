@@ -16,4 +16,5 @@ pip install --force-reinstall --ignore-installed --upgrade --no-index --no-deps 
 
 # Start application
 C_FORCE_ROOT=1 celery -A tasks worker --detach --loglevel=info --logfile="/logs/sara-celery.log"
+./create_recommendations.py
 ./ml_classifier.py

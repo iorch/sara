@@ -1,5 +1,10 @@
+#!/usr/bin/env python
+
+import os
 from elasticsearch import Elasticsearch,helpers
-es = Elasticsearch()
+
+ES_HOST = os.getenv( 'ELASTICSEARCH_PORT_9200_TCP_ADDR', 'localhost' )+':'+os.getenv( 'ELASTICSEARCH_PORT_9200_TCP_PORT', '9200' )
+es = Elasticsearch([ES_HOST])
 
 dicts_from_file = []
 with open('peticion_titulo.json','r') as inf:
