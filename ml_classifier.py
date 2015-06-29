@@ -33,6 +33,11 @@ app.config.from_pyfile('settings.cfg')
 db = SQLAlchemy(app)
 auth = HTTPBasicAuth()
 
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -189,7 +194,7 @@ def get_hits():
     if not request.args.get('title', '') and (not request.json or not 'title' in request.json):
         abort(400)
     print(request.args.get('title', ''))
-    title = request.args.get('title', '') if request.args.get('title', '') else request.json['title'] 
+    title = request.args.get('title', '') if request.args.get('title', '') else request.json['title']
     task = {
         'title': title
     }
