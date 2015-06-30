@@ -114,7 +114,7 @@ def review_words(raw_text):
 def get_relevant_hits(like_text):
     index_name = "peticion"
     doc_type = "pregunta"
-    stop_words = ["quiero","para", "apoyo", "una", "la", "el", "de", "en","solicito","solicitud","beca"]
+    stop_words = ["quiero","para","apoyo","una","la","el","de","del","en","solicito","solicitud","programa"]
     body = {"query": {"more_like_this": {"fields": ["titulo","keywords"],
             "like_text": like_text, "min_term_freq": 1,
             "max_query_terms": 100, "min_doc_freq": 0,
@@ -190,12 +190,11 @@ def create_task():
 def get_hits():
     if not request.args.get('title', '') and (not request.json or not 'title' in request.json):
         abort(400)
-    print(request.args.get('title', ''))
     title = request.args.get('title', '') if request.args.get('title', '') else request.json['title']
     task = {
         'title': title
     }
-    relevant_sugestions = get_relevant_hits(json.dumps(task['title'], encoding='utf-8', ensure_ascii=False))
+    relevant_sugestions = get_relevant_hits(task['title'])
     return json.dumps({'results': relevant_sugestions}, encoding='utf-8', ensure_ascii=False)
 
 
