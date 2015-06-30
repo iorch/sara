@@ -22,6 +22,7 @@ from tasks import evaluate_petition
 from tasks import catch_bad_words_in_text
 from tasks import update_remote_petition
 from celery import chord
+import json
 
 
 app = Flask(__name__)
@@ -113,8 +114,8 @@ def review_words(raw_text):
 def get_relevant_hits(like_text):
     index_name = "peticion"
     doc_type = "pregunta"
-    stop_words = ["para", "apoyo", "una", "la", "el", "de", "en"]
-    body = {"query": {"more_like_this": {"fields": ["titulo"],
+    stop_words = ["quiero","para", "apoyo", "una", "la", "el", "de", "en","solicito","solicitud","beca"]
+    body = {"query": {"more_like_this": {"fields": ["titulo","keywords"],
             "like_text": like_text, "min_term_freq": 1,
             "max_query_terms": 100, "min_doc_freq": 0,
             "stop_words": stop_words}}}
@@ -125,9 +126,10 @@ def get_relevant_hits(like_text):
     for hit in hits:
         if hit["_score"] >= 0.3:
             source = hit["_source"]
-            relevant_sugestions.append({"title": source["titulo"],
-                                        "description": source["sugerencia"],
-                                        "link": source["link"]})
+            relevant_sugestions.append({u"title": unicode(source["titulo"]),
+                                        u"description": unicode(source["sugerencia"]),
+                                        u"links": source["links"],
+                                        u"score": hit["_score"]})
     return relevant_sugestions
 
 
@@ -193,8 +195,8 @@ def get_hits():
     task = {
         'title': title
     }
-    relevant_sugestions = get_relevant_hits(task['title'])
-    return jsonify({'results': relevant_sugestions})
+    relevant_sugestions = get_relevant_hits(json.dumps(task['title'], encoding='utf-8', ensure_ascii=False))
+    return json.dumps({'results': relevant_sugestions}, encoding='utf-8', ensure_ascii=False)
 
 
 if __name__ == '__main__':
