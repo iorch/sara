@@ -10,40 +10,22 @@ En este repositorio, se encuentra un código que genera un modelo de Random Fore
 Además, contiene un servicio web que recibe la petición en fromato json y responde con la dependencia asignada por el clasificador.
 
 ## Instrucciones de uso
-__Elastic Search__
-```sh
-docker run \
---name sara-es \
--P -d elasticsearch 
+
+Ejecución del servicio:
+
+```
+fleetctl load services/*.service
+fleetctl start sara.service
 ```
 
-__MySQL__
-```sh
-docker run \
---name sara-mysql \
--e MYSQL_ROOT_PASSWORD=root \
--v /SOME/VALID/PATH:/var/lib/mysql \
--P -d mysql
+Inspeccionar logs de cualquier componente:
+
+```
+fleetctl journal -f sara
 ```
 
-__Redis__
-```sh
-docker run \
---name sara-redis \
--v /OTHER/VALID/PATH:/data \
--P -d redis
-```
+Detener el servicio:
 
-__SARA__
-```sh
-docker run \
---name sara \
---link sara-mysql:mysql \
---link sara-es:elasticsearch \
---link sara-redis:redis \
--v `pwd`/logs:/logs \
--e PETITIONS_SERVER_URL="x.x.x.x" \
--e SARA_MODEL="x.x.x.x" \
--p 5000:5000 \
--d mxabierto/sara
+```
+fleetctl stop sara
 ```
