@@ -115,7 +115,7 @@ def review_words(raw_text):
 def get_relevant_hits(like_text):
     index_name = "peticion"
     doc_type = "pregunta"
-    stop_words = ["quiero", "para", "apoyo", "una", "la", "el", "de", "del", "en", "solicito", "solicitud", "programa"]
+    stop_words = ["a", "quiero", "para", "apoyo", "una", "la", "el", "de", "del", "en", "solicito", "solicitud", "programa"]
     body = {"query": {"more_like_this": {"fields": ["titulo", "keywords"],
             "like_text": like_text, "min_term_freq": 1,
             "max_query_terms": 100, "min_doc_freq": 0,
