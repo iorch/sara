@@ -26,7 +26,7 @@ import json
 
 
 app = Flask(__name__)
-app.config.from_pyfile('settings.cfg')
+app.config.from_object('config.Config')
 
 db = SQLAlchemy(app)
 auth = HTTPBasicAuth()
