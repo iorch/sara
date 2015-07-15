@@ -135,7 +135,7 @@ def get_relevant_hits(like_text):
                     links.append("http://"+link)
             relevant_sugestions.append({u"title": unicode(source["titulo"]),
                                         u"description": unicode(source["sugerencia"]),
-                                        u"links": source["links"],
+                                        u"links": links,
                                         u"score": hit["_score"]})
     return relevant_sugestions
 
