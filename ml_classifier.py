@@ -29,10 +29,11 @@ import nltk
 nltk.download('stopwords')
 
 app = Flask(__name__)
-app.config.from_pyfile('settings.cfg')
+app.config.from_object('config.Config')
 
 db = SQLAlchemy(app)
 auth = HTTPBasicAuth()
+
 
 @app.after_request
 def after_request(response):
@@ -52,8 +53,8 @@ class User(db.Model):
     def verify_password(self, password):
         return pwd_context.verify(password, self.password_hash)
 
-    def generate_auth_token(self, expiration=31556926):
-        s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
+    def generate_auth_token(self):
+        s = Serializer(app.config['SECRET_KEY'])
         return s.dumps({'id': self.id})
 
     @staticmethod
@@ -98,8 +99,8 @@ def new_user():
 @app.route('/users/token')
 @auth.login_required
 def get_auth_token():
-    token = g.user.generate_auth_token(31556926)
-    return jsonify({'token': token.decode('ascii'), 'duration': 31556926})
+    token = g.user.generate_auth_token()
+    return jsonify({'token': token.decode('ascii')})
 
 
 def review_words(raw_text):
@@ -140,7 +141,7 @@ def get_relevant_hits(like_text):
                     links.append("http://"+link)
             relevant_sugestions.append({u"title": unicode(source["titulo"]),
                                         u"description": unicode(source["sugerencia"]),
-                                        u"links": source["links"],
+                                        u"links": links,
                                         u"score": hit["_score"]})
     return relevant_sugestions
 
