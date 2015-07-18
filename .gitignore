@@ -71,6 +71,6 @@ target/
 
 *.sql
 
-data/
-models/
-plots/
+# data/
+# models/
+# plots/

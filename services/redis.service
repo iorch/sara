@@ -1,0 +1,19 @@
+[Unit]
+Description=Redis - Advanced key-value cache and store
+Documentation=http://redis.io/documentation
+Requires=flanneld.service
+After=flanneld.service
+
+[Service]
+Restart=always
+RestartSec=5
+TimeoutStartSec=0
+KillMode=none
+
+ExecStartPre=-/usr/bin/docker kill redis
+ExecStartPre=-/usr/bin/docker rm redis
+ExecStartPre=-/usr/bin/docker pull redis
+ExecStart=/usr/bin/docker run --name=redis \
+  -v /home/core/sara/redis:/data \
+  -P redis
+ExecStop=/usr/bin/docker stop redis

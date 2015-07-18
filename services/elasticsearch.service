@@ -1,0 +1,17 @@
+[Unit]
+Description=ElasticSearch - Search and analyze data in real time
+Documentation=https://www.elastic.co/products/elasticsearch
+Requires=flanneld.service
+After=flanneld.service
+
+[Service]
+Restart=always
+RestartSec=5
+TimeoutStartSec=0
+KillMode=none
+
+ExecStartPre=-/usr/bin/docker kill elasticsearch
+ExecStartPre=-/usr/bin/docker rm elasticsearch
+ExecStartPre=-/usr/bin/docker pull elasticsearch
+ExecStart=/usr/bin/docker run --name=elasticsearch -P elasticsearch
+ExecStop=/usr/bin/docker stop elasticsearch

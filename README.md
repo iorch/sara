@@ -10,8 +10,22 @@ En este repositorio, se encuentra un código que genera un modelo de Random Fore
 Además, contiene un servicio web que recibe la petición en fromato json y responde con la dependencia asignada por el clasificador.
 
 ## Instrucciones de uso
-1. Se asume que se tiene aislado el ambiente de python, con todos los requerimientos listados en requirement.txt
-2. Crear las carpetas data/, plots/, models/
-3. Ejecutar BagOfWords.py
-4. Iniciar redis-server y `celery -A tasks worker --loglevel=info`
-5. Encender el servicio web:  ml_classifier.py
+
+Ejecución del servicio:
+
+```
+fleetctl load services/*.service
+fleetctl start sara.service
+```
+
+Inspeccionar logs de cualquier componente:
+
+```
+fleetctl journal -f sara
+```
+
+Detener el servicio:
+
+```
+fleetctl stop sara
+```

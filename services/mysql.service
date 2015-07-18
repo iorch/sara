@@ -1,0 +1,20 @@
+[Unit]
+Description=MySQL - Open Source Relational Database
+Documentation=http://dev.mysql.com/doc/refman/5.6/en/index.html
+Requires=flanneld.service
+After=flanneld.service
+
+[Service]
+Restart=always
+RestartSec=5
+TimeoutStartSec=0
+KillMode=none
+
+ExecStartPre=-/usr/bin/docker kill mysql
+ExecStartPre=-/usr/bin/docker rm mysql
+ExecStartPre=-/usr/bin/docker pull mysql
+ExecStart=/usr/bin/docker run --name=mysql \
+  -v /home/core/sara/data:/var/lib/mysql \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -P mysql
+ExecStop=/usr/bin/docker stop mysql

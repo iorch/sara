@@ -24,6 +24,9 @@ from tasks import update_remote_petition
 from celery import chord
 import json
 
+# download stop words
+import nltk
+nltk.download('stopwords')
 
 app = Flask(__name__)
 app.config.from_object('config.Config')
@@ -120,7 +123,9 @@ def get_relevant_hits(like_text):
             "like_text": like_text, "min_term_freq": 1,
             "max_query_terms": 100, "min_doc_freq": 0,
             "stop_words": stop_words}}}
-    es = elasticsearch.Elasticsearch()
+    
+    ES_HOST = os.getenv( 'ELASTICSEARCH_PORT_9200_TCP_ADDR', 'localhost' )+':'+os.getenv( 'ELASTICSEARCH_PORT_9200_TCP_PORT', '9200' )
+    es = elasticsearch.Elasticsearch([ES_HOST])
     mlts = es.search(index=index_name, doc_type=doc_type, body=body)
     relevant_sugestions = []
     hits = mlts.get('hits')["hits"]

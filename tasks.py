@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Celery tasks
 
+import os
 from celery import Celery
 from sklearn.externals import joblib
 from profanity_filter import *
@@ -8,9 +9,10 @@ import requests
 import os
 import json
 
-BROKER_URL = 'redis://localhost:6379/0'
+REDIS_HOST = os.getenv( 'REDIS_PORT_6379_TCP_ADDR', 'localhost' )+':'+os.getenv( 'REDIS_PORT_6379_TCP_PORT', '6379' )
+BROKER_URL = 'redis://'+ REDIS_HOST +'/0'
+CELERY_RESULT_BACKEND = 'redis://'+ REDIS_HOST +'/0'
 BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 1800}  # 1/2 hour.
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
 app = Celery('tasks', backend=CELERY_RESULT_BACKEND, broker=BROKER_URL)
 

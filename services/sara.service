@@ -1,0 +1,29 @@
+[Unit]
+Description=SARA - Sistema Automático de Respuesta y Atención a Ciudadanos
+Documentation=https://github.com/mxabierto/sara
+Requires=flanneld.service
+Requires=mysql.service
+Requires=elasticsearch.service
+Requires=redis.service
+After=flanneld.service
+After=mysql.service
+After=elasticsearch.service
+After=redis.service
+
+[Service]
+Restart=always
+RestartSec=5
+TimeoutStartSec=0
+KillMode=none
+
+ExecStartPre=-/usr/bin/docker kill sara
+ExecStartPre=-/usr/bin/docker rm sara
+ExecStart=/usr/bin/docker run --name=sara \
+  -v /home/core/sara/logs:/logs \
+  --link mysql:mysql \
+  --link elasticsearch:elasticsearch \
+  --link redis:redis \
+  -e SARA_MODEL=https://s3.amazonaws.com/org.mxabierto/sara/model-0.1.tgz \
+  -e PETITIONS_SERVER_URL=http://x.x.x.x \
+  -p 5000:5000 mxabierto/sara
+ExecStop=/usr/bin/docker stop sara
