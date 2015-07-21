@@ -70,6 +70,8 @@ def update_remote_petition(results):
         print 'ERROR reason: %s'  % e.response.reason
         print e
     except requests.exceptions.RequestException as e: # Catch all non HTTP errors
+        # example: ConnectionError, URLRequired, TooManyRedirects, ConnectTimeout,
+        # ReadTimeout
         print 'An unexpected error ocurred.' 
         print e 
 
