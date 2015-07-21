@@ -6,7 +6,7 @@ from celery import Celery
 from sklearn.externals import joblib
 from profanity_filter import *
 import requests
-import os
+import sys
 import json
 
 REDIS_HOST = os.getenv( 'REDIS_PORT_6379_TCP_ADDR', 'localhost' )+':'+os.getenv( 'REDIS_PORT_6379_TCP_PORT', '6379' )
@@ -58,9 +58,12 @@ def update_remote_petition(results):
     }
 
     url = os.environ['PETITIONS_SERVER_URL']
-    r = requests.put(url, data=petition)
-    print 'Updating:'
-    print json.dumps(petition, encoding='utf-8', ensure_ascii=False)
-    print 'PUT request to', url, ' was ', r.status_code
-
+    try:
+        r = requests.put(url, data=petition)
+        print 'Updating:'
+        print json.dumps(petition, encoding='utf-8', ensure_ascii=False)
+        print 'PUT request to', url, ' was ', r.status_code
+    except requests.exceptions.RequestException as e:
+        print e
+        sys.exit(1)
 
