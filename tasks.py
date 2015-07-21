@@ -64,7 +64,12 @@ def update_remote_petition(results):
         print 'Updating:'
         print json.dumps(petition, encoding='utf-8', ensure_ascii=False)
         print 'PUT request to', url, ' was ', r.status_code
-    except requests.exceptions.RequestException as e:
+        r.raise_for_status() # Rise an exception if status code is not 200
+    except requests.HTTPError as e: 
+        print 'HTTP ERROR occured, status code %s' % e.response.status_code
+        print 'ERROR reason: %s'  % e.response.reason
         print e
-        sys.exit(1)
+    except requests.exceptions.RequestException as e: # Catch all non HTTP errors
+        print 'An unexpected error ocurred.' 
+        print e 
 
