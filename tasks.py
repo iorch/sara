@@ -6,7 +6,6 @@ from celery import Celery
 from sklearn.externals import joblib
 from profanity_filter import *
 import requests
-import sys
 import json
 
 REDIS_HOST = os.getenv( 'REDIS_PORT_6379_TCP_ADDR', 'localhost' )+':'+os.getenv( 'REDIS_PORT_6379_TCP_PORT', '6379' )
