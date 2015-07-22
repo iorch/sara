@@ -58,7 +58,8 @@ def update_remote_petition(results):
     }
 
     url = os.environ['PETITIONS_SERVER_URL']
-    r = requests.put(url, data=petition)
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    r = requests.put(url, data=json.dumps(petition), headers=headers)
     print 'Updating:'
     print json.dumps(petition, encoding='utf-8', ensure_ascii=False)
     print 'PUT request to', url, ' was ', r.status_code
