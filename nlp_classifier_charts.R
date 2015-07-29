@@ -3,7 +3,7 @@ library(ggplot2)
 library(dplyr)
 library(hash)
 require(scales)
-setwd('~/ws/atencion/atencion-ciudadana')
+setwd('./')
 files<-list.files("./data/",pattern = "*", full.names = TRUE, ignore.case = TRUE)
 for (f in files){
 tc = read.csv(f,stringsAsFactors=FALSE) 
