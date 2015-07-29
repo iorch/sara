@@ -3,7 +3,7 @@
 
 elasticsearch:
   image: elasticsearch
-  ports: 
+  ports:
     - "9200"
     - "9300"
 
@@ -16,7 +16,7 @@ redis:
 
 mysql:
   image: mysql
-  ports: 
+  ports:
     - "3306"
   volumes:
     - /home/core/sara/data:/var/lib/mysql
@@ -31,7 +31,9 @@ sara:
     - /home/core/sara/logs:/logs
   environment:
     - SARA_MODEL=https://s3.amazonaws.com/org.mxabierto/sara/model-0.1.tgz
-    - PETITIONS_SERVER_URL=x.x.x.x
+    - PETITIONS_SERVER_URL=http://example.com/update
+    - SQLALCHEMY_URL=sqlite:////tmp/users.db
+    - SECRET_KEY=HACKME
   links:
     - elasticsearch
     - redis
