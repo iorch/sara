@@ -19,15 +19,21 @@ app = Celery('tasks', backend=CELERY_RESULT_BACKEND, broker=BROKER_URL)
 
 @app.task
 def evaluate_petition(petition_id, features):
-    pipe = joblib.load('models/bow_ng6_nf9500_ne750.pkl')
-    test_data_features = pipe.named_steps['vectorizer'].transform(features)
-    test_data_features = test_data_features.toarray()
-    # TODO: check API of this method, what's returning on error?
-    result = pipe.named_steps['forest'].predict(test_data_features)
-    return {
-        'id': petition_id,
-        'agency': result[0] if len(result) > 0 else -1
-    }
+    try:
+        pipe = joblib.load('models/bow_ng6_nf9500_ne750.pkl')
+        test_data_features = pipe.named_steps['vectorizer'].transform(features)
+        test_data_features = test_data_features.toarray()
+        # TODO: check API of this method, what's returning on error?
+        result = pipe.named_steps['forest'].predict(test_data_features)
+        agency = result[0] if len(result) > 0 else -1
+    except:
+        print "Unexpected error:", sys.exc_info()[0]
+        agency = -1
+    else:
+        return {
+            'id': petition_id,
+            'agency': agency
+        }
 
 
 @app.task
