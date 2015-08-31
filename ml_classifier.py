@@ -16,8 +16,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'DeepLearningMovies/'))
 from KaggleWord2VecUtility import KaggleWord2VecUtility
 sys.path.append(os.path.dirname(__file__))
 from profanity_filter import *
+from recommendations import *
 from nltk.corpus import stopwords
-import elasticsearch
 from tasks import evaluate_petition
 from tasks import catch_bad_words_in_text
 from tasks import update_remote_petition
@@ -115,37 +115,6 @@ def review_words(raw_text):
     return u" ".join(meaningful_words)
 
 
-def get_relevant_hits(like_text):
-    index_name = "peticion"
-    doc_type = "pregunta"
-    stop_words = ["a","quiero","para","apoyo","una","la","el","de","del","en","solicito","solicitud","programa"]
-    body = {"query": {"more_like_this": {"fields": ["titulo","keywords"],
-            "like_text": like_text, "min_term_freq": 1,
-            "max_query_terms": 100, "min_doc_freq": 0,
-            "stop_words": stop_words}}}
-    
-    ES_HOST = os.getenv( 'ELASTICSEARCH_PORT_9200_TCP_ADDR', 'localhost' )+':'+os.getenv( 'ELASTICSEARCH_PORT_9200_TCP_PORT', '9200' )
-    es = elasticsearch.Elasticsearch([ES_HOST])
-    mlts = es.search(index=index_name, doc_type=doc_type, body=body)
-    relevant_sugestions = []
-    hits = mlts.get('hits')["hits"]
-    for hit in hits:
-        if hit["_score"] >= 0.3:
-            source = hit["_source"]
-            links = []
-            #Make sure that link starts with a http protocol
-            for link in source["links"]:
-                if (link[:7]=="http://" or link[:8]=="https://"):
-                    links.append(link)
-                else:
-                    links.append("http://"+link)
-            relevant_sugestions.append({u"title": unicode(source["titulo"]),
-                                        u"description": unicode(source["sugerencia"]),
-                                        u"links": links,
-                                        u"score": hit["_score"]})
-    return relevant_sugestions
-
-
 @app.errorhandler(400)
 def bad_request(error):
     app.logger.error(error)
@@ -207,7 +176,10 @@ def get_hits():
     task = {
         'title': title
     }
-    relevant_sugestions = get_relevant_hits(task['title'])
+    r = Recommender()
+    relevant_sugestions = {}
+    relevant_sugestions['peticion'] = r.get_relevant_hits(task['title'], 'peticion')
+    relevant_sugestions['formalities'] = r.get_relevant_hits(task['title'], 'formalities')
     return json.dumps({'results': relevant_sugestions}, encoding='utf-8', ensure_ascii=False)
 
 
@@ -218,5 +190,5 @@ if __name__ == '__main__':
     import logging
     logging.basicConfig(filename='/logs/app.log', level=logging.DEBUG)
     logging.getLogger('sqlalchemy.engine').setLevel(logging.DEBUG)
-    
+
     app.run(host='0.0.0.0')
