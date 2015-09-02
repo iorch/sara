@@ -173,13 +173,10 @@ def get_hits():
     if not request.args.get('title', '') and (not request.json or not 'title' in request.json):
         abort(400)
     title = request.args.get('title', '') if request.args.get('title', '') else request.json['title']
-    task = {
-        'title': title
-    }
     r = Recommender()
     relevant_sugestions = {}
-    relevant_sugestions['peticion'] = r.get_relevant_hits(task['title'], 'peticion')
-    relevant_sugestions['formalities'] = r.get_relevant_hits(task['title'], 'formalities')
+    relevant_sugestions = r.get_relevant_hits(title, 'peticion')
+    relevant_sugestions += r.get_relevant_hits(title, 'formalities')
     return json.dumps({'results': relevant_sugestions}, encoding='utf-8', ensure_ascii=False)
 
 
