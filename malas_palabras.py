@@ -31,5 +31,5 @@ __una_palabra__ = [u'ano',
                    u'pendej\w+',
                    u'pinche',
                    u'pucha',
-                   u'\w+put\w+',
+                   u'put\w+',
                    u'verga\w+']
