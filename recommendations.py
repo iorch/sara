@@ -32,14 +32,24 @@ class Recommender:
                         'fields':["titulo", "keywords"],
                         'links': 'links',
                         'titulo': 'titulo',
-                        'sugerencia': 'sugerencia'},
+                        'sugerencia': 'sugerencia',
+                        'page_rank': None},
             'formalities': { 'file': 'formalities.json',
                         'type': 'tramite',
                         'fields': ['process_citizen_name','description_citizen'],
                         'links': 'process_online_link',
                         'titulo': 'process_citizen_name',
-                        'sugerencia': 'description_citizen'}
-        }
+                        'sugerencia': 'description_citizen',
+                        'page_rank': None},
+            'page_rank': {'file': 'recommendations.json',
+                        'type': 'ranked_search',
+                        'fields': ['content', 'title'],
+                        'links': 'link',
+                        'titulo': 'title',
+                        'sugerencia': 'content',
+                        'page_rank': 'score'},
+            }
+
 
     def delete_index(self, index_name = ''):
         self.es.indices.delete( index = index_name, ignore = [400, 404] )
@@ -94,9 +104,15 @@ class Recommender:
                 links = self.get_links(source[self.index_config[index_name]['links']])
                 titulo = source[self.index_config[index_name]['titulo']]
                 sugerencia = source[self.index_config[index_name]['sugerencia']]
+                page_rank_name = self.index_config[index_name]['page_rank']
+                if page_rank_name:
+                    page_rank = source[page_rank_name]
+                else:
+                    page_rank = None
                 relevant_sugestions.append({u"title": unicode(titulo),
                                             u"description": unicode(sugerencia),
                                             u"links": links,
+                                            u'page_rank': page_rank,
                                             u"score": hit["_score"]})
         return relevant_sugestions
 
@@ -104,6 +120,6 @@ class Recommender:
 if __name__ == '__main__':
     pp = MyPrettyPrinter()
     r = Recommender()
-    #r.create_recommendations()
+    r.create_recommendations()
     pp.pprint(r.get_relevant_hits("trabajo",'formalities'))
     pp.pprint(r.get_relevant_hits("trabajo",'peticion'))
