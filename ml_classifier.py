@@ -177,6 +177,7 @@ def get_hits():
     relevant_sugestions = {}
     relevant_sugestions = r.get_relevant_hits(title, 'peticion')
     relevant_sugestions += r.get_relevant_hits(title, 'formalities')
+    relevant_sugestions += r.get_relevant_hits(title, 'ranked_search')
     return json.dumps({'results': relevant_sugestions}, encoding='utf-8', ensure_ascii=False)
 
 
