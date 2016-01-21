@@ -15,7 +15,7 @@ from sklearn import pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.ensemble import RandomForestClassifier
 import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), 'DeepLearningMovies/'))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'lib/'))
 from KaggleWord2VecUtility import KaggleWord2VecUtility
 import pandas as pd
 from pandas import DataFrame

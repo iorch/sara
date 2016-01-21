@@ -16,7 +16,7 @@ redis==2.10.3
 six==1.9.0
 wsgiref==0.1.2
 elasticsearch==1.6.0
-MySQL-python==1.2.5
+MySQL-python
 requests
 # compile-heavy packages start here
 numpy==1.9.2

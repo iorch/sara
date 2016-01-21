@@ -26,8 +26,8 @@ RUN \
   liblapack-dev \
   libopenblas-dev \
   libxml2-dev \
-  libxslt1-dev && \
-  ldconfig && \
+  libxslt1-dev \
+  ldconfig \
   rm -rf /var/lib/apt/lists/*
 
 # Add source

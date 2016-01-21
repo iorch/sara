@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 import re
 import os
 import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), 'DeepLearningMovies/'))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'lib/'))
 from KaggleWord2VecUtility import KaggleWord2VecUtility
 sys.path.append(os.path.dirname(__file__))
 from profanity_filter import *
