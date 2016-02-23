@@ -15,23 +15,32 @@
 #   -d mxabierto/sara
 
 # Base image
-FROM mxabierto/python
+FROM mxabierto/jessie
 
-MAINTAINER bcessa <ben@pixative.com>
+MAINTAINER iorch <j.martinezortega@gmail.com>
 
 # Install dependencies
 RUN \
   apt-get update && \
   apt-get install -y \
+  python-dev \
+  python-pip \
   liblapack-dev \
   libopenblas-dev \
   libxml2-dev \
+  python-scipy \
+  libmysqlclient-dev \
   libxslt1-dev && \
   ldconfig && \
   rm -rf /var/lib/apt/lists/*
 
 # Add source
-ADD . /root/sara
+ADD requirements.txt /root/sara/requirements.txt
+RUN cd /root/sara && \
+  pip install --upgrade pip && \
+  pip install --force-reinstall --ignore-installed --upgrade -r requirements.txt
+
+ADD . /root/sara/
 
 # Default port
 EXPOSE 5000
