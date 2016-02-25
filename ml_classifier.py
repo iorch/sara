@@ -1,15 +1,13 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-from flask import Flask, request, jsonify, make_response, abort, g, url_for
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask import Flask, request, jsonify, make_response, abort, g
+from flask_sqlalchemy import SQLAlchemy
 from flask.ext.httpauth import HTTPBasicAuth
 from passlib.apps import custom_app_context as pwd_context
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
-from sklearn.feature_extraction.text import TfidfVectorizer
 from bs4 import BeautifulSoup
-import re
 import os
 import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), 'DeepLearningMovies/'))
@@ -24,16 +22,26 @@ from tasks import update_remote_petition
 from celery import chord
 import json
 
+from logging.handlers import RotatingFileHandler
+
 # download stop words
 import nltk
 nltk.download('stopwords')
 
 app = Flask(__name__)
-app.config.from_object('config.Config')
+
+config_class = 'config.BaseConfig'
+if os.getenv('STAGING'):
+    config_class = 'config.StagingConfig'
+app.config.from_object(config_class)
+
+handler = RotatingFileHandler(app.config['LOGFILE'], maxBytes=150*1024*1024, backupCount=5)
+handler.setLevel(app.config['LOGLEVEL'])
+app.logger.addHandler(handler)
+
 
 db = SQLAlchemy(app)
 auth = HTTPBasicAuth()
-
 
 @app.after_request
 def after_request(response):
@@ -150,6 +158,7 @@ def create_task():
         'text': request.json['text'],
     }
     clean_test_descripciones = []
+    app.logger.info('petition_classification: ' + task['text'])
     features = review_words(task['text'])
     clean_test_descripciones.append(u" ".join(
         KaggleWord2VecUtility.review_to_wordlist(features, True)))
@@ -173,8 +182,8 @@ def get_hits():
     if not request.args.get('title', '') and (not request.json or not 'title' in request.json):
         abort(400)
     title = request.args.get('title', '') if request.args.get('title', '') else request.json['title']
+    app.logger.info('petition_recommendations: ' + title)
     r = Recommender()
-    relevant_sugestions = {}
     relevant_sugestions = r.get_relevant_hits(title, 'peticion')
     relevant_sugestions += r.get_relevant_hits(title, 'formalities')
     return json.dumps({'results': relevant_sugestions}, encoding='utf-8', ensure_ascii=False)
@@ -183,9 +192,4 @@ def get_hits():
 if __name__ == '__main__':
     if not os.path.exists('db.sqlite'):
         db.create_all()
-
-    import logging
-    logging.basicConfig(filename='/logs/app.log', level=logging.DEBUG)
-    logging.getLogger('sqlalchemy.engine').setLevel(logging.DEBUG)
-
     app.run(host='0.0.0.0')
