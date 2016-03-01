@@ -1,0 +1,25 @@
+Flask==0.10.1
+Flask-HTTPAuth==2.5.0
+Flask-SQLAlchemy==2.0
+Jinja2==2.7.3
+MarkupSafe==0.23
+Werkzeug==0.10.4
+argparse==1.2.1
+beautifulsoup4==4.3.2
+celery==3.1.18
+itsdangerous==0.24
+nltk==3.0.2
+passlib==1.6.2
+python-dateutil==2.4.2
+pytz==2015.2
+redis==2.10.3
+six==1.9.0
+wsgiref==0.1.2
+elasticsearch==1.6.0
+MySQL-python==1.2.5
+requests
+# compile-heavy packages start here
+numpy==1.9.2
+scikit-learn==0.16.1
+scipy==0.15.1
+pandas==0.16.0
