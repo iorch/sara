@@ -1,7 +1,8 @@
-conn = new Mongo();
-db = conn.getDB("cms_tramites");
+"use strict";
+var conn = new Mongo();
+var db = conn.getDB("cms_tramites");
 
-mr = db.runCommand({
+var mr = db.runCommand({
   "mapReduce" : "formalities",
   "map" : function() {
     var key = this._id.str
@@ -19,8 +20,9 @@ mr = db.runCommand({
   "out": "links"
 });
 
-cursor = db.getCollection(mr.result).find({"value.process_citizen_name": {$ne:null}},{"_id":1});
+var cursor = db.getCollection(mr.result).find({"value.process_citizen_name": {$ne:null}},{"_id":1});
+var id;
 while ( cursor.hasNext() ) {
-  var id = cursor.next()["_id"];
+   id = cursor.next()["_id"];
    printjsononeline( db.getCollection(mr.result).findOne({"_id":id},{"value":1})["value"]);
 }
